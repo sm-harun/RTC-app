@@ -1,16 +1,37 @@
 <script lang="ts">
   import "../app.postcss";
-  import { AppShell } from "@skeletonlabs/skeleton";
+
+  import {
+    AppShell,
+    initializeStores,
+    Modal,
+    getModalStore,
+    type ModalSettings,
+  } from "@skeletonlabs/skeleton";
+
   import NavItems from "$lib/components/NavItems.svelte";
-  import { messages } from "$lib/stores";
+  import { messages, username, id } from "$lib/stores";
 
-  let messageValue: string;
+  initializeStores();
 
-  function addMessage() {
-    messages.update((currentMessages) => [...currentMessages, messageValue]);
-    messageValue = "";
+  let modalStore = getModalStore();
+
+  function changeUsername(): void {
+    const modalSettings: ModalSettings = {
+      type: "prompt",
+      title: "Enter new name: ",
+      valueAttr: { type: "text", minlength: 5, maxlength: 10, required: true },
+      response: (r: string) => {
+        username.set(r);
+        modalStore.close();
+      },
+    };
+
+    modalStore.trigger(modalSettings);
   }
 </script>
+
+<Modal />
 
 <!-- svelte-ignore illegal-attribute-character -->
 <AppShell
@@ -23,41 +44,20 @@
   </svelte:fragment>
 
   <svelte:fragment slot="sidebarLeft">
-    <div class="w-full h-full">
-      <NavItems />
+    <div class="w-full h-full p-4 relative">
+      <NavItems {changeUsername} />
+      <div class="absolute bottom-4 left-4">
+        <p>
+          <strong>Name: </strong>
+          <span class="text-primary-500">{$username}</span>
+        </p>
+        <p>
+          <strong>ID: </strong>
+          <span class="text-primary-500">{$id}</span>
+        </p>
+      </div>
     </div>
   </svelte:fragment>
 
   <slot />
-
-  <svelte:fragment slot="pageFooter">
-    <form class="h-full w-full" on:submit|preventDefault={addMessage}>
-      <div
-        class="h-full w-full input-group input-group-divider grid-cols-[1fr_auto]"
-      >
-        <input
-          class="p-3 text-white"
-          type="text"
-          placeholder="Search..."
-          bind:value={messageValue}
-        />
-        <button class="variant-filled-secondary hover:varient-filled-primary">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="size-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
-            />
-          </svg>
-        </button>
-      </div>
-    </form>
-  </svelte:fragment>
 </AppShell>
