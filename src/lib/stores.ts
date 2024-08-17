@@ -4,6 +4,7 @@ export type Variant = "sent" | "recieved" | "notification";
 export type message = {
   type: Variant,
   text: string,
+  user?: string
 }
 
 export const messages = writable<message[]>([{ type: "notification", text: "Conversation Started" }]);

@@ -1,32 +1,47 @@
 <script lang="ts">
   import Message from "$lib/components/Message.svelte";
-  import { messages, id } from "$lib/stores";
+  import { messages, username, id } from "$lib/stores";
   import { io } from "socket.io-client";
   import type { Socket } from "socket.io-client";
 
   import type { Variant } from "$lib/stores";
 
+  let hostedSite = "https://rtc-socket.onrender.com";
+  let localSite = "http://localhost:3001";
+
   let messageValue: string;
 
-  let socket: Socket = io("https://rtc-socket.onrender.com");
+  let socket: Socket = io(hostedSite);
 
   socket.on("connect", () => {
-    id.set(socket.id);
+    id.set(socket?.id);
   });
 
-  socket.on("recieve-message", (newMessage, messageType) => {
-    console.log("Client recieved " + newMessage);
-    addMessage("recieved", newMessage);
+  socket.on("broad-connection", (userId) => {
+    addMessage("notification", "User with ID: " + userId + " connected.");
   });
 
-  function addMessage(newType: Variant, newText: string) {
-    let newMessage = { type: newType, text: newText };
+  socket.on("recieve-message", (newMessage, senderUsername) => {
+    console.log("Client recieved " + newMessage + " by " + senderUsername);
+    addMessage("recieved", newMessage, senderUsername);
+  });
+
+  socket.on("broad-disconnection", (userId) => {
+    addMessage("notification", "User with ID: " + userId + " disconnected.");
+  });
+
+  function addMessage(newType: Variant, newText: string, newUsername?: string) {
+    let newMessage = {
+      type: newType,
+      text: newText,
+      user: newUsername || null,
+    };
     messages.update((currentMessages) => [...currentMessages, newMessage]);
   }
 
   function updater(type: Variant) {
-    addMessage(type, messageValue);
-    socket.emit("new-message", messageValue, type);
+    addMessage(type, messageValue, $username);
+    socket.emit("new-message", messageValue, $username);
 
     messageValue = "";
   }
@@ -35,7 +50,11 @@
 <div class="flex flex-col h-full w-full">
   <div class="flex-1 w-full p-5 flex flex-col items-end">
     {#each $messages as message}
-      <Message text={message.text} variant={message.type} />
+      <Message
+        text={message.text}
+        variant={message.type}
+        user={message?.user}
+      />
     {/each}
   </div>
 
