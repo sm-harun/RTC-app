@@ -74,7 +74,7 @@
         <input
           class="p-3 text-white"
           type="text"
-          placeholder="Search..."
+          placeholder="Enter message..."
           bind:value={messageValue}
         />
         <button class="variant-filled-secondary hover:varient-filled-primary">
