@@ -1,4 +1,5 @@
 import { writable } from "svelte/store";
+import { localStorageStore } from "@skeletonlabs/skeleton";
 
 export type Variant = "sent" | "recieved" | "notification";
 export type message = {
@@ -8,5 +9,5 @@ export type message = {
 }
 
 export const messages = writable<message[]>([{ type: "notification", text: "Conversation Started" }]);
-export const username = writable("{ unset }");
+export const username = localStorageStore("rtcusername", "{ unset }");
 export const id = writable(" connecting... ");

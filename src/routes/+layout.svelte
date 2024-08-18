@@ -14,7 +14,7 @@
   } from "@skeletonlabs/skeleton";
 
   import NavItems from "$lib/components/NavItems.svelte";
-  import { messages, username, id } from "$lib/stores";
+  import { username } from "$lib/stores";
 
   initializeStores();
 
@@ -73,7 +73,7 @@
   slotPageFooter="h-16 variant-filled-primary"
 >
   <svelte:fragment slot="header">
-    <AppBar slotLead="md:hidden" slotTrail="md:hidden ml-auto">
+    <AppBar slotLead="md:hidden" slotTrail="ml-auto">
       <svelte:fragment slot="lead"
         ><button on:click={() => toggleDrawer(true)}
           ><svg
@@ -93,7 +93,23 @@
         </button>
       </svelte:fragment>
       <h1 class="text-2xl text-primary-500">RTC App</h1>
-      <svelte:fragment slot="trail"><LightSwitch /></svelte:fragment>
+      <svelte:fragment slot="trail">
+        <a
+          href="https://github.com/sm-harun"
+          class="btn variant-ghost-primary hidden md:block"
+        >
+          <span>Github</span>
+        </a>
+        <a
+          href="https://github.com/sm-harun/RTC-app"
+          class="btn variant-ghost hidden md:block"
+        >
+          <span>Repository</span>
+        </a>
+        <span class="md:hidden">
+          <LightSwitch />
+        </span>
+      </svelte:fragment>
     </AppBar>
   </svelte:fragment>
 

@@ -30,12 +30,28 @@
           </span>
         </li>
       </button>
-      <li class="list-items">
-        <span>Theme</span>
-        <span class="rounded-xl">
-          <LightSwitch />
-        </span>
-      </li>
+      <span class="hidden md:block">
+        <li class="list-items">
+          <span>Theme</span>
+          <span class="rounded-xl">
+            <LightSwitch />
+          </span>
+        </li>
+      </span>
+      <span class="md:hidden">
+        <li class="list-items">
+          <a href="https://github.com/sm-harun/RTC-app" class="w-full h-full">
+            <span>Github</span>
+          </a>
+        </li>
+      </span>
+      <span class="md:hidden">
+        <li class="list-items">
+          <a href="https://github.com/sm-harun/RTC-app" class="w-full h-full">
+            <span>Repository</span>
+          </a>
+        </li>
+      </span>
     </ul>
   </nav>
   <div class="absolute bottom-4 left-4">
@@ -52,6 +68,6 @@
 
 <style>
   .list-items {
-    @apply text-xl p-4 rounded-xl flex justify-between items-center hover:bg-secondary-500/20 focus:bg-secondary-500;
+    @apply text-xl p-4 rounded-xl flex justify-between items-center hover:bg-secondary-500/20;
   }
 </style>

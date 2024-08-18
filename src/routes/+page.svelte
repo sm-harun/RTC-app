@@ -4,17 +4,20 @@
   import { io } from "socket.io-client";
   import type { Socket } from "socket.io-client";
 
-  import type { Variant } from "$lib/stores";
+  import type { Variant, message } from "$lib/stores";
 
   let hostedSite = "https://rtc-socket.onrender.com";
-  let localSite = "http://localhost:3001";
+  // let localSite = "http://localhost:3001";
 
   let messageValue: string;
 
   let socket: Socket = io(hostedSite);
 
   socket.on("connect", () => {
-    id.set(socket?.id);
+    if (socket.id) {
+      id.set(socket.id);
+    }
+    socket.emit("new-connection", socket.id);
   });
 
   socket.on("broad-connection", (userId) => {
@@ -31,10 +34,10 @@
   });
 
   function addMessage(newType: Variant, newText: string, newUsername?: string) {
-    let newMessage = {
+    let newMessage: message = {
       type: newType,
       text: newText,
-      user: newUsername || null,
+      user: newUsername || undefined,
     };
     messages.update((currentMessages) => [...currentMessages, newMessage]);
   }

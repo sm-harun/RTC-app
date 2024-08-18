@@ -12,21 +12,21 @@
   {#if user}
     <h4 class="absolute top-3 right-3"><strong>{user}</strong></h4>
   {/if}
-  <span>
+  <div class={variant == "notification" ? "m-0" : "mt-5"}>
     {text}
-  </span>
+  </div>
 </div>
 
 <style>
   .sent {
-    @apply w-4/5 h-24 variant-filled-primary p-4 mt-4 rounded-tl-2xl rounded-bl-2xl rounded-br-2xl;
+    @apply min-w-40 max-w-[80%] h-auto variant-filled-primary p-4 mt-4 rounded-tl-2xl rounded-bl-2xl rounded-br-2xl;
   }
 
   .recieved {
-    @apply w-4/5 h-24 variant-filled-secondary p-4 mt-4 mr-auto rounded-tr-2xl rounded-bl-2xl rounded-br-2xl;
+    @apply min-w-40 max-w-[80%] h-auto variant-filled-secondary p-4 mt-4 mr-auto rounded-tr-2xl rounded-bl-2xl rounded-br-2xl;
   }
 
   .notification {
-    @apply w-full h-12 variant-glass-surface text-slate-200/40 flex items-center px-10;
+    @apply w-full h-auto variant-glass-surface mt-2 text-slate-200/40 flex items-center p-3 px-5;
   }
 </style>
