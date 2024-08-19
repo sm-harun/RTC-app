@@ -8,6 +8,6 @@ export type message = {
   user?: string
 }
 
-export const messages = writable<message[]>([{ type: "notification", text: "Conversation Started" }]);
+export const messages = writable<message[]>([]);
 export const username = localStorageStore("rtcusername", "{ unset }");
 export const id = writable(" connecting... ");

@@ -1,27 +1,63 @@
 <script lang="ts">
+  import { initializeApp } from "firebase/app";
+  import { getDatabase, ref, set, push, get } from "firebase/database";
+
   import Message from "$lib/components/Message.svelte";
   import { messages, username, id } from "$lib/stores";
+  import type { Variant, message } from "$lib/stores";
+
   import { io } from "socket.io-client";
   import type { Socket } from "socket.io-client";
 
-  import type { Variant, message } from "$lib/stores";
-
-  let hostedSite = "https://rtc-socket.onrender.com";
-  // let localSite = "http://localhost:3001";
+  // let hostedSite = "https://rtc-socket.onrender.com";
+  let localSite = "http://localhost:3001";
 
   let messageValue: string;
 
-  let socket: Socket = io(hostedSite);
+  let socket: Socket = io(localSite);
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDpyPLOQsOueepemQma5G8O4r3ywkA70Dc",
+    authDomain: "rtc-app-11370.firebaseapp.com",
+    projectId: "rtc-app-11370",
+    storageBucket: "rtc-app-11370.appspot.com",
+    messagingSenderId: "621823141851",
+    appId: "1:621823141851:web:1baf4efc60a195789f69fe",
+    measurementId: "G-FVH9QDPQHP",
+    databaseURL: "https://rtc-app-11370-default-rtdb.firebaseio.com",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
   socket.on("connect", () => {
     if (socket.id) {
       id.set(socket.id);
     }
     socket.emit("new-connection", socket.id);
+
+    const userRef = ref(db, "message");
+
+    get(userRef).then((snapshot) => {
+      const oldMessages = snapshot.val();
+
+      if (oldMessages) {
+        const messagesArray = Object.keys(oldMessages).map((messageId) => ({
+          ...oldMessages[messageId],
+        }));
+        messages.set(messagesArray);
+      } else {
+        messages.set([]);
+      }
+    });
   });
 
   socket.on("broad-connection", (userId) => {
-    addMessage("notification", "User with ID: " + userId + " connected.");
+    addMessage(
+      "notification",
+      "User with ID: " + userId + " connected.",
+      "server",
+    );
   });
 
   socket.on("recieve-message", (newMessage, senderUsername) => {
@@ -30,16 +66,38 @@
   });
 
   socket.on("broad-disconnection", (userId) => {
-    addMessage("notification", "User with ID: " + userId + " disconnected.");
+    addMessage(
+      "notification",
+      "User with ID: " + userId + " disconnected.",
+      "server",
+    );
   });
 
-  function addMessage(newType: Variant, newText: string, newUsername?: string) {
+  let count = 0;
+
+  function sendMessageToDb(newMessage: message, tester: string) {
+    set(push(ref(db, "message")), {
+      type: "recieved",
+      user: newMessage.user,
+      text: newMessage.text,
+    });
+    console.log(count);
+    count++;
+  }
+
+  function addMessage(newType: Variant, newText: string, newUsername: string) {
     let newMessage: message = {
       type: newType,
       text: newText,
-      user: newUsername || undefined,
+      user: newUsername,
     };
     messages.update((currentMessages) => [...currentMessages, newMessage]);
+
+    // We don't want notifications to be saved to the database.
+    if (newType === "notification" && newUsername === "server") {
+      return;
+    }
+    sendMessageToDb(newMessage, "main one");
   }
 
   function updater(type: Variant) {

@@ -9,7 +9,7 @@
 </script>
 
 <div class={variant + " relative"} in:fly={{ y: 50, duration: 1000 }}>
-  {#if user}
+  {#if user != "server"}
     <h4 class="absolute top-3 right-3"><strong>{user}</strong></h4>
   {/if}
   <div class={variant == "notification" ? "m-0" : "mt-5"}>
