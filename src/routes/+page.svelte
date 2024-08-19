@@ -10,11 +10,11 @@
   import type { Socket } from "socket.io-client";
 
   let hostedSite = "https://rtc-socket.onrender.com";
-  // let localSite = "http://localhost:3001";
+  let localSite = "http://localhost:3001";
 
   let messageValue: string;
 
-  let socket: Socket = io(hostedSite);
+  let socket: Socket = io(localSite);
 
   const firebaseConfig = {
     apiKey: "AIzaSyDpyPLOQsOueepemQma5G8O4r3ywkA70Dc",
@@ -87,19 +87,21 @@
       text: newText,
       user: newUsername,
     };
-    messages.update((currentMessages) => [...currentMessages, newMessage]);
 
-    // We don't want notifications to be saved to the database.
-    if (newType === "notification" && newUsername === "server") {
-      return;
-    }
-    sendMessageToDb(newMessage);
+    messages.update((currentMessages) => [...currentMessages, newMessage]);
   }
 
   function updater(type: Variant) {
     addMessage(type, messageValue, $username);
     socket.emit("new-message", messageValue, $username);
 
+    let newMessage: message = {
+      type: type,
+      text: messageValue,
+      user: $username,
+    };
+
+    sendMessageToDb(newMessage);
     messageValue = "";
   }
 </script>
