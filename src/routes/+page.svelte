@@ -10,11 +10,11 @@
   import type { Socket } from "socket.io-client";
 
   let hostedSite = "https://rtc-socket.onrender.com";
-  let localSite = "http://localhost:3001";
+  // let localSite = "http://localhost:3001";
 
   let messageValue: string;
 
-  let socket: Socket = io(localSite);
+  let socket: Socket = io(hostedSite);
 
   const firebaseConfig = {
     apiKey: "AIzaSyDpyPLOQsOueepemQma5G8O4r3ywkA70Dc",
