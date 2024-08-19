@@ -9,12 +9,12 @@
   import { io } from "socket.io-client";
   import type { Socket } from "socket.io-client";
 
-  // let hostedSite = "https://rtc-socket.onrender.com";
-  let localSite = "http://localhost:3001";
+  let hostedSite = "https://rtc-socket.onrender.com";
+  // let localSite = "http://localhost:3001";
 
   let messageValue: string;
 
-  let socket: Socket = io(localSite);
+  let socket: Socket = io(hostedSite);
 
   const firebaseConfig = {
     apiKey: "AIzaSyDpyPLOQsOueepemQma5G8O4r3ywkA70Dc",
@@ -73,16 +73,12 @@
     );
   });
 
-  let count = 0;
-
-  function sendMessageToDb(newMessage: message, tester: string) {
+  function sendMessageToDb(newMessage: message) {
     set(push(ref(db, "message")), {
       type: "recieved",
       user: newMessage.user,
       text: newMessage.text,
     });
-    console.log(count);
-    count++;
   }
 
   function addMessage(newType: Variant, newText: string, newUsername: string) {
@@ -97,7 +93,7 @@
     if (newType === "notification" && newUsername === "server") {
       return;
     }
-    sendMessageToDb(newMessage, "main one");
+    sendMessageToDb(newMessage);
   }
 
   function updater(type: Variant) {
